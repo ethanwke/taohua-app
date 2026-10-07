@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🌸 桃花朵朵开</title>
+<style>
+:root{
+  --p3:#ffc2d4; --p4:#ff8fab; --p5:#e0517a; --p6:#b03060;
+  --text:#4a2c38; --bad:#d6336c; --warn:#c47f00;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f4eef1;color:var(--text);font-size:12px;
+  -webkit-font-smoothing:antialiased;
+}
+
+#win{
+  position:fixed;right:14px;bottom:14px;
+  width:390px;
+  background:#fff;border-radius:14px;
+  box-shadow:0 10px 40px rgba(176,48,96,.22),0 2px 8px rgba(0,0,0,.08);
+  overflow:hidden;transition:height .22s ease;
+  border:1px solid #ffe3ec;
+}
+#win.min{width:auto;}
+#win.min .body{display:none;}
+#win.min .bar{border-radius:14px;}
+
+.bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 12px;cursor:move;
+  background:linear-gradient(135deg,#ffe9f0,#ffd9e6);
+  border-bottom:1px solid #ffe3ec;
+  user-select:none;
+}
+.bar .t{font-weight:800;color:var(--p6);font-size:13px;letter-spacing:.5px;}
+.bar .t span{font-weight:600;color:#b98ba0;font-size:10.5px;margin-left:5px;letter-spacing:1px;}
+.bar .btn{
+  width:22px;height:22px;border:none;border-radius:7px;
+  background:rgba(255,255,255,.75);color:var(--p6);
+  font-size:14px;line-height:1;cursor:pointer;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.bar .btn:hover{background:#fff;}
+
+.body{padding:10px 12px 12px;}
+
+.row{display:flex;gap:8px;align-items:flex-end;}
+.fld{flex:1;}
+.fld label{display:block;font-size:10.5px;color:#a56b80;font-weight:700;margin-bottom:3px;letter-spacing:.3px;}
+.fld input{
+  width:100%;padding:6px 8px;font-size:15px;font-weight:800;
+  border:1.5px solid var(--p3);border-radius:8px;background:#fff;
+  color:var(--p6);text-align:center;outline:none;
+}
+.fld input:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(224,81,122,.12);}
+
+.tog{
+  display:flex;align-items:center;gap:6px;margin-top:8px;
+  padding:7px 9px;border-radius:9px;cursor:pointer;
+  background:#fff8fb;border:1.5px dashed var(--p3);user-select:none;
+}
+.tog:hover{border-color:var(--p5);}
+.tog input{display:none;}
+.tog .sw{
+  width:34px;height:19px;border-radius:12px;background:#e5c6d1;
+  position:relative;transition:.2s;flex-shrink:0;
+}
+.tog .sw::after{
+  content:"";position:absolute;top:2.5px;left:2.5px;
+  width:14px;height:14px;border-radius:50%;background:#fff;
+  transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.tog input:checked + .sw{background:linear-gradient(90deg,var(--p4),var(--p5));}
+.tog input:checked + .sw::after{transform:translateX(15px);}
+.tog .tx{font-size:11.5px;font-weight:800;color:var(--p6);}
+.tog .tx em{font-style:normal;font-weight:600;color:#a56b80;}
+
+#perLine{
+  display:none;margin-top:8px;padding:7px 10px;border-radius:9px;
+  background:linear-gradient(135deg,#fff0f5,#ffe3ec);
+  border:1.5px solid var(--p4);
+  font-size:11.5px;font-weight:800;color:var(--p6);
+  align-items:center;gap:7px;
+}
+#perLine.show{display:flex;}
+#perLine .n{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:24px;height:24px;padding:0 6px;border-radius:12px;
+  background:linear-gradient(135deg,var(--p4),var(--p5));
+  color:#fff;font-size:14px;font-weight:900;
+}
+
+table{width:100%;border-collapse:collapse;margin-top:10px;font-size:11.5px;}
+thead th{
+  font-size:10px;color:#a56b80;font-weight:700;
+  padding:0 3px 4px;text-align:center;letter-spacing:.3px;
+}
+tbody tr{border-top:1px solid #ffeef4;}
+tbody tr:first-child{border-top:none;}
+tbody td{padding:6px 3px;text-align:center;color:#6b4a58;}
+tbody td:first-child{
+  text-align:left;font-weight:800;font-size:13px;color:var(--p6);
+  padding-left:4px;width:52px;
+}
+tr.rec{background:linear-gradient(90deg,#fff0f5,#fff);}
+tr.rec td:first-child{color:var(--p5);}
+tr.bad{opacity:.42;}
+
+.el{font-weight:800;color:var(--bad);font-size:13px;}
+.el0{font-weight:700;color:var(--warn);}
+
+.tag{
+  display:inline-block;padding:2px 7px;border-radius:9px;
+  font-size:9.5px;font-weight:800;letter-spacing:.2px;white-space:nowrap;
+}
+.t-rec{background:linear-gradient(135deg,var(--p4),var(--p5));color:#fff;}
+.t-ok{background:#e4f7ec;color:#1e7a44;}
+.t-w{background:#fff2d6;color:#a06a00;}
+.t-b{background:#ffe3ec;color:#b03060;}
+
+.recs{margin-top:10px;display:flex;gap:7px;}
+.rc{
+  flex:1;padding:8px 9px;border-radius:10px;
+  background:linear-gradient(135deg,#fff5f9,#ffe9f0);
+  border:1.5px solid var(--p4);
+}
+.rc .h{font-size:9.5px;font-weight:800;color:var(--p5);letter-spacing:1px;margin-bottom:4px;}
+.rc .v{font-size:19px;font-weight:900;color:var(--p5);line-height:1;}
+.rc .v small{font-size:11px;font-weight:700;color:#a56b80;margin-left:2px;}
+.rc .d{font-size:10px;color:#8a5b6e;margin-top:5px;line-height:1.5;}
+.rc .d b{color:var(--bad);}
+
+.no{text-align:center;color:#b98ba0;font-size:11px;padding:14px 0;}
+</style>
+</head>
+<body>
+
+<div id="win">
+  <div class="bar" id="bar">
+    <div class="t">🌸 桃花朵朵开<span>报数计算器</span></div>
+    <button class="btn" id="minBtn" title="收起">−</button>
+  </div>
+
+  <div class="body">
+    <div class="row">
+      <div class="fld">
+        <label>存活人数</label>
+        <input type="number" id="alive" value="45" min="1" max="999">
+      </div>
+      <div class="fld" id="senFld" style="display:none;">
+        <label>高三生人数</label>
+        <input type="number" id="senior" value="13" min="0" max="999">
+      </div>
+    </div>
+
+    <label class="tog" for="highMode">
+      <input type="checkbox" id="highMode">
+      <span class="sw"></span>
+      <span class="tx">高阶玩法 <em>· 静音组队 + 每组只能有 N 名高三生</em></span>
+    </label>
+
+    <div id="perLine">
+      系统决定：每组只能有 <span class="n" id="perVal">2</span> 名高三生
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>开花</th>
+          <th>组数</th>
+          <th>淘汰</th>
+          <th class="cs">需高三</th>
+          <th>状态</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <div class="recs" id="recs"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const NUMS=[4,5,6,7,8];
+
+  const $win=document.getElementById('win');
+  const $bar=document.getElementById('bar');
+  const $min=document.getElementById('minBtn');
+  const $alive=document.getElementById('alive');
+  const $high=document.getElementById('highMode');
+  const $senior=document.getElementById('senior');
+  const $senFld=document.getElementById('senFld');
+  const $perLine=document.getElementById('perLine');
+  const $perVal=document.getElementById('perVal');
+  const $tbody=document.getElementById('tbody');
+  const $recs=document.getElementById('recs');
+
+  const iv=(el,lo,hi)=>{let v=parseInt(el.value,10);if(isNaN(v))v=lo;return Math.max(lo,Math.min(hi,v));};
+  const A=()=>iv($alive,1,999);
+  const S=()=>iv($senior,0,999);
+  const H=()=>$high.checked;
+
+  /* 自动决定每组“只能有”几名高三生 */
+  function decidePer(alive,senior,high){
+    if(!high)return 0;
+    if(senior<=0)return 1;
+    let bestPer=1,bestCount=-1;
+    for(let per of [3,2,1]){
+      let c=0;
+      for(let n of NUMS){
+        const g=Math.floor(alive/n);
+        if(g>0 && g*per<=senior)c++;
+      }
+      if(c>=2)return per;
+      if(c>bestCount){bestCount=c;bestPer=per;}
+    }
+    return bestPer;
+  }
+
+  function calc(n,alive,high,senior,per){
+    const g=Math.floor(alive/n), used=g*n, el=alive-used;
+    let need=0,ok=g>0,why='';
+    if(high){
+      need=g*per;
+      if(g===0){ok=false;why='组不成';}
+      else if(need>senior){ok=false;why='高三不足';}
+    }else if(g===0){ok=false;why='组不成';}
+    if(ok&&el===0)why='无淘汰';
+    return {n,g,used,el,need,ok,why};
+  }
+
+  const sc=e=> e>=1&&e<=2?0 : e===3?1 : e===4?2 : e<=6?3 : 4;
+
+  function render(){
+    const alive=A(),high=H(),senior=S();
+    const per=decidePer(alive,senior,high);
+
+    $senFld.style.display=high?'':'none';
+    $perLine.classList.toggle('show',high);
+    if(high)$perVal.textContent=per;
+    document.querySelectorAll('.cs').forEach(e=>e.style.display=high?'':'none');
+
+    const list=NUMS.map(n=>calc(n,alive,high,senior,per));
+    const rec=list.filter(r=>r.ok&&r.el>=1)
+                  .sort((a,b)=>sc(a.el)-sc(b.el)||a.el-b.el);
+    const recSet=new Set(rec.slice(0,2).map(r=>r.n));
+
+    let html='';
+    list.forEach(r=>{
+      const cls=!r.ok?'bad':(recSet.has(r.n)?'rec':'');
+      let tag;
+      if(!r.ok)tag=`<span class="tag t-b">${r.why}</span>`;
+      else if(r.el===0)tag=`<span class="tag t-w">无淘汰</span>`;
+      else if(recSet.has(r.n))tag=`<span class="tag t-rec">推荐</span>`;
+      else tag=`<span class="tag t-ok">可用</span>`;
+
+      html+=`<tr class="${cls}">
+        <td>${r.n}朵</td>
+        <td>${r.g}</td>
+        <td>${r.el===0?`<span class="el0">0</span>`:`<span class="el">${r.el}</span>`}</td>
+        <td class="cs" style="display:${high?'':'none'}">${r.ok||r.why==='高三不足'?r.need:'—'}</td>
+        <td>${tag}</td>
+      </tr>`;
+    });
+    $tbody.innerHTML=html;
+
+    if(!rec.length){
+      $recs.innerHTML=`<div class="no">没有「淘汰 ≥ 1」的可用数字</div>`;
+    }else{
+      $recs.innerHTML=rec.slice(0,3).map(r=>`
+        <div class="rc">
+          <div class="h">推荐报数</div>
+          <div class="v">${r.n}<small>朵</small></div>
+          <div class="d">${r.g}组 · 淘汰 <b>${r.el}</b> 人${high?`<br>需高三 ${r.need}（每组恰好 ${per}）`:''}</div>
+        </div>`).join('');
+    }
+  }
+
+  ['input','change'].forEach(ev=>{
+    $alive.addEventListener(ev,render);
+    $senior.addEventListener(ev,render);
+    $high.addEventListener(ev,render);
+  });
+
+  $min.addEventListener('click',e=>{
+    e.stopPropagation();
+    $win.classList.toggle('min');
+    $min.textContent=$win.classList.contains('min')?'+':'−';
+  });
+
+  let drag=false,ox=0,oy=0;
+  $bar.addEventListener('mousedown',e=>{
+    if(e.target===$min)return;
+    drag=true;
+    const r=$win.getBoundingClientRect();
+    ox=e.clientX-r.left;oy=e.clientY-r.top;
+    $win.style.right='auto';$win.style.bottom='auto';
+    $win.style.left=r.left+'px';$win.style.top=r.top+'px';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    $win.style.left=Math.max(0,Math.min(window.innerWidth-60,e.clientX-ox))+'px';
+    $win.style.top=Math.max(0,Math.min(window.innerHeight-40,e.clientY-oy))+'px';
+  });
+  document.addEventListener('mouseup',()=>drag=false);
+
+  render();
+})();
+</script>
+</body>
+</html>
